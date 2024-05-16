@@ -1,6 +1,7 @@
 package usecase;
 
 import domain.exception.SaldoInvalidoException;
+import domain.exception.ValorNegativoException;
 import domain.gateway.ContaGateway;
 import domain.model.Cliente;
 import domain.model.Conta;
@@ -133,6 +134,22 @@ public class ContaUseCaseTest {
         Assertions.assertNotNull(contaEncontrada);
 //        System.out.println("CONTA ENCONTRADA ===> " + contaEncontrada);
     }
+
+    @Test
+    public void testarAdicionarSaldoEmprestimoDeveLancarExcecaoQuandoContaForNula() {
+        Assertions.assertThrows(Exception.class, () -> contaUseCase.adicionarSaldoEmprestimo("300",100d));
+    }
+
+    @Test
+    public void testarAdicionarSaldoEmprestimoDeveLancarExcecaoQuandoValorForNegativo() {
+        Cliente cliente = new Cliente("Cliente Teste", "122.222.333-10");
+        Conta conta = new Conta("400", cliente);
+
+        contaUseCase.criarConta(conta);
+
+        Assertions.assertThrows(ValorNegativoException.class, () -> contaUseCase.adicionarSaldoEmprestimo("400",-100d));
+    }
+
 
     @Test
     public void testarEmprestimoComSaldoInsuficiente() throws Exception {

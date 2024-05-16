@@ -1,6 +1,7 @@
 package domain.usecase;
 
 import domain.exception.SaldoInvalidoException;
+import domain.exception.ValorNegativoException;
 import domain.gateway.ContaGateway;
 import domain.model.Conta;
 
@@ -53,6 +54,17 @@ public class ContaUseCase {
         conta.depositar(valor);
 
 
+        contaGateway.save(conta);
+    }
+
+    public void adicionarSaldoEmprestimo(String idConta, Double valor) throws Exception{
+        Conta conta = contaGateway.findById(idConta);
+        if (conta == null) throw new Exception("Conta invalida - [id: " + idConta + "]");
+
+        if (valor < 0) throw new ValorNegativoException("O valor não pode ser negativo");
+
+        conta.adicionarSaldoParaEmprestimo(valor);
+        System.out.println(conta);
         contaGateway.save(conta);
     }
 
