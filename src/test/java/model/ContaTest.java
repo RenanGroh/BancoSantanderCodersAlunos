@@ -3,8 +3,9 @@ package model;
 import domain.exception.SaldoInvalidoException;
 import domain.model.Cliente;
 import domain.model.Conta;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 public class ContaTest {
 
@@ -20,20 +21,20 @@ public class ContaTest {
         // When
         try {
             conta1.removerSaldoParaEmprestimo(100.0);
-            Assert.fail("Nao lancou nenhuma exception");
+            Assertions.fail("Nao lancou nenhuma exception");
         } catch (Exception e) {
-            Assert.assertEquals("Saldo para emprestimo inferior ao solicitado", e.getMessage());
+            Assertions.assertEquals("Saldo para emprestimo inferior ao solicitado", e.getMessage());
         }
     }
 
-    @Test(expected = Exception.class)
-    public void deveLancarExceptionCasoValorSolicitadoSejaMaiorQueValorDisponivel_2() throws Exception {
+    @Test//(expected = Exception.class)
+    public void deveLancarExceptionCasoValorSolicitadoSejaMaiorQueValorDisponivel_2() {
         // Given
         Cliente cliente1 = new Cliente("Ana", "123.123.123-12");
         Conta conta1 = new Conta("1", cliente1);
 
         // When
-        conta1.removerSaldoParaEmprestimo(100.0);
+        Assertions.assertThrows(Exception.class,() -> conta1.removerSaldoParaEmprestimo(100.0));
     }
 
     @Test
@@ -41,8 +42,8 @@ public class ContaTest {
         Cliente cliente1 = new Cliente("Ana", "123.123.123-12");
         Conta conta1 = new Conta("1", cliente1);
 
-        Throwable throwable = Assert.assertThrows(SaldoInvalidoException.class, () -> conta1.removerSaldoParaEmprestimo(100.0));
-        Assert.assertEquals("Saldo para emprestimo inferior ao solicitado", throwable.getMessage());
+        Throwable throwable = Assertions.assertThrows(SaldoInvalidoException.class, () -> conta1.removerSaldoParaEmprestimo(100.0));
+        Assertions.assertEquals("Saldo para emprestimo inferior ao solicitado", throwable.getMessage());
     }
 
 }

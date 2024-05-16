@@ -6,9 +6,8 @@ import domain.model.Cliente;
 import domain.model.Conta;
 import domain.usecase.ContaUseCase;
 import infra.gateway.ContaGatewayLocal;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
-import java.util.Optional;
 
 public class ContaUseCaseTest {
 
@@ -16,7 +15,7 @@ public class ContaUseCaseTest {
     private ContaGateway contaGateway;
 
     // @BeforeClass - antes da classe ser instanciada
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         // Subir banco
         // Preparar alguma config
@@ -24,7 +23,7 @@ public class ContaUseCaseTest {
     }
 
     // @Before - antes de CADA teste
-    @Before
+    @BeforeEach
     public void before() {
         System.out.println("before");
 
@@ -42,13 +41,13 @@ public class ContaUseCaseTest {
     }
 
     // @After
-    @After
+    @AfterEach
     public void after() {
         System.out.println("After");
     }
 
     // @AfterClass
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         System.out.println("After class");
     }
@@ -68,25 +67,25 @@ public class ContaUseCaseTest {
         // - Valor esperado - Valor atual
         Double valorEsperadoConta1 = 80.0;
         Conta conta1DB = contaGateway.findById("1");
-        Assert.assertEquals(valorEsperadoConta1, conta1DB.getSaldo());
+        Assertions.assertEquals(valorEsperadoConta1, conta1DB.getSaldo());
 
         Double valorEsperadoConta2 = 20.0;
         Conta conta2DB = contaGateway.findById("2");
-        Assert.assertEquals(valorEsperadoConta2, conta2DB.getSaldo());
+        Assertions.assertEquals(valorEsperadoConta2, conta2DB.getSaldo());
     }
 
     @Test
     public void testeTransferirDeveLancarExcecaoQuandoContaOrigemForNull() {
         String idOrigem = "203940";
         Conta contaDestino = contaUseCase.buscarConta("2");
-        Assert.assertThrows("Conta origem invalida - [id: " + idOrigem + "]", Exception.class, () -> contaUseCase.transferir(idOrigem, contaDestino.getId(), 100.00));
+        Assertions.assertThrows(Exception.class, () -> contaUseCase.transferir(idOrigem, contaDestino.getId(), 100.00), "Conta origem invalida - [id: " + idOrigem + "]");
     }
 
     @Test
     public void testeTransferirDeveLancarExcecaoQuandoContaDestinoForNull() {
         Conta contaOrigem = contaUseCase.buscarConta("1");
         String idDestino = "203940";
-        Assert.assertThrows("Conta origem invalida - [id: " + idDestino + "]", Exception.class, () -> contaUseCase.transferir(contaOrigem.getId(), idDestino , 100.00));
+        Assertions.assertThrows(Exception.class, () -> contaUseCase.transferir(contaOrigem.getId(), idDestino , 100.00),"Conta origem invalida - [id: " + idDestino + "]");
     }
 
     @Test
@@ -100,12 +99,12 @@ public class ContaUseCaseTest {
 
         // Then
         Double valorEsperado = 10.0;
-        Assert.assertEquals(valorEsperado, conta1.getSaldo());
+        Assertions.assertEquals(valorEsperado, conta1.getSaldo());
     }
 
     @Test
     public void testarDepositarDeveLancarExcecaoQuandoContaForNull() {
-        Assert.assertThrows(Exception.class, () -> contaUseCase.depositar("10292", 100.00));
+        Assertions.assertThrows(Exception.class, () -> contaUseCase.depositar("10292", 100.00));
     }
 
     @Test
@@ -120,7 +119,7 @@ public class ContaUseCaseTest {
         Conta contaNova = new Conta("69", clienteNovo);
 
         contaUseCase.criarConta(contaNova);
-        Assert.assertEquals(contaNova, contaGateway.findById("69"));
+        Assertions.assertEquals(contaNova, contaGateway.findById("69"));
     }
 
     @Test
@@ -131,7 +130,7 @@ public class ContaUseCaseTest {
         contaUseCase.criarConta(contaNova);
 
         Conta contaEncontrada = contaUseCase.buscarConta("69");
-        Assert.assertNotNull(contaEncontrada);
+        Assertions.assertNotNull(contaEncontrada);
 //        System.out.println("CONTA ENCONTRADA ===> " + contaEncontrada);
     }
 
@@ -143,7 +142,7 @@ public class ContaUseCaseTest {
 
         contaNova.adicionarSaldoParaEmprestimo(100d);
 
-        Assert.assertThrows(SaldoInvalidoException.class, () -> contaUseCase.emprestimo("69", 300d));
+        Assertions.assertThrows(SaldoInvalidoException.class, () -> contaUseCase.emprestimo("69", 300d));
     }
 
     @Test
@@ -154,12 +153,12 @@ public class ContaUseCaseTest {
 
         contaNova.adicionarSaldoParaEmprestimo(200000d);
         contaUseCase.emprestimo("69", 100000d);
-        Assert.assertEquals(100000d, contaNova.getSaldoDisponivelParaEmprestimo(),0.000001);
+        Assertions.assertEquals(100000d, contaNova.getSaldoDisponivelParaEmprestimo(),0.000001);
     }
 
     @Test
     public void testarEmprestimoContaInvalida() throws Exception {
-        Assert.assertThrows(Exception.class, () -> contaUseCase.emprestimo("32", 300d));
+        Assertions.assertThrows(Exception.class, () -> contaUseCase.emprestimo("32", 300d));
     }
 
     @Test
@@ -170,7 +169,7 @@ public class ContaUseCaseTest {
         contaUseCase.criarConta(conta);
 
         contaUseCase.emprestimo("123", 5000d);
-        Assert.assertEquals(0d, conta.getSaldoDisponivelParaEmprestimo(), 0.001);
+        Assertions.assertEquals(0d, conta.getSaldoDisponivelParaEmprestimo(), 0.001);
     }
 
 
