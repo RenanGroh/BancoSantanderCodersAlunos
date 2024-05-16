@@ -168,9 +168,12 @@ public class ContaUseCaseTest {
         Conta contaNova = new Conta("69", clienteNovo);
         contaUseCase.criarConta(contaNova);
 
-        contaNova.adicionarSaldoParaEmprestimo(200000d);
-        contaUseCase.emprestimo("69", 100000d);
-        Assertions.assertEquals(100000d, contaNova.getSaldoDisponivelParaEmprestimo(),0.000001);
+
+        contaUseCase.adicionarSaldoEmprestimo("69",200_000d);
+        contaUseCase.emprestimo("69", 100_000d);
+        Conta contaDB = contaUseCase.buscarConta("69");
+
+        Assertions.assertEquals(100000d, contaDB.getSaldoDisponivelParaEmprestimo(),0.000001);
     }
 
     @Test
@@ -182,12 +185,14 @@ public class ContaUseCaseTest {
     public void testarEmprestimoComSaldoExato() throws Exception {
         Cliente cliente = new Cliente("Valido Cliente", "123.456.789-10");
         Conta conta = new Conta("123", cliente);
-        conta.adicionarSaldoParaEmprestimo(5000d);
         contaUseCase.criarConta(conta);
+        contaUseCase.adicionarSaldoEmprestimo("123", 5000d);
 
         contaUseCase.emprestimo("123", 5000d);
-        Assertions.assertEquals(0d, conta.getSaldoDisponivelParaEmprestimo(), 0.001);
+        Conta contaDB = contaUseCase.buscarConta("123");
+        Assertions.assertEquals(0d, contaDB.getSaldoDisponivelParaEmprestimo(), 0.001);
     }
+
 
 
 

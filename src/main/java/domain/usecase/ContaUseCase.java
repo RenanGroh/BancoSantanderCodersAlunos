@@ -64,7 +64,6 @@ public class ContaUseCase {
         if (valor < 0) throw new ValorNegativoException("O valor não pode ser negativo");
 
         conta.adicionarSaldoParaEmprestimo(valor);
-        System.out.println(conta);
         contaGateway.save(conta);
     }
 
